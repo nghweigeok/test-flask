@@ -543,26 +543,44 @@ def find_item_substitute(item_code, procedure_name):
         if not item_found:
             return f"Item code {item_code} is not part of the required items for procedure {procedure_name}."
 
-        # Find the substitute item in the substitutes dataframe
-        substitute_entry = substitutes_df[substitutes_df["primaryItemID"] == item_code]
+        # Find the substitute items in the substitutes dataframe
+        substitute_entries = substitutes_df[
+            substitutes_df["primaryItemID"] == item_code
+        ]
 
-        if substitute_entry.empty:
+        if substitute_entries.empty:
             return f"No substitutes found for item code {item_code} for procedure {procedure_name}."
 
-        substitute_item_id = substitute_entry.iloc[0]["substituteItemID"]
+        # Initialize the result list
+        results = []
 
-        if not substitute_item_id or substitute_item_id == "":
-            return f"No substitute item available for item code {item_code} for procedure {procedure_name}."
+        # Loop through each substitute item found
+        for _, substitute_entry in substitute_entries.iterrows():
+            substitute_item_id = substitute_entry["substituteItemID"]
 
-        # Find the item name in the items dataframe
-        substitute_item = items_df[items_df["id"] == substitute_item_id]
+            if not substitute_item_id or substitute_item_id == "":
+                results.append(
+                    f"No substitute item available for item code {item_code} for procedure {procedure_name}."
+                )
+                continue
 
-        if substitute_item.empty:
-            return f"Substitute item not found in items dataframe for substitute item ID {substitute_item_id}."
+            # Find the item name in the items dataframe
+            substitute_item = items_df[items_df["id"] == substitute_item_id]
 
-        substitute_item_name = substitute_item.iloc[0]["name"]
+            if substitute_item.empty:
+                results.append(
+                    f"Substitute item not found in items dataframe for substitute item ID {substitute_item_id}."
+                )
+                continue
 
-        return f"Substitute for item code {item_code} for procedure {procedure_name} is: {substitute_item_name}"
+            substitute_item_name = substitute_item.iloc[0]["name"]
+            results.append(
+                f"Substitute for item code {item_code} for procedure {procedure_name} is: {substitute_item_name}"
+            )
+
+        # Join all results into a single string
+        return "\n".join(results)
+
     except Exception as e:
         logger.error(f"Error finding item substitute: {e}")
         return "An error occurred while finding item substitute."
@@ -653,6 +671,13 @@ Always reply based on the retrieved data. Never make up your own answer.
 Check your reply to make sure all your recommended items are in the same category as the asked item (the first 6 digits of unspsc must match).
 For example, if the original item has unspsc value of 42181803, its item category is 421818. 
 Remove any substitute item from the list that does not have the same item category of 421818.
+For any user input that asks about substitutes, on top of your answer, append a string formatted response (found items) in this format:
+SUBSTITUTE DATA ## item name, item name, ##.
+Doing this is to make it easier for string formatting.
+Start with the keyword "SUBSTITUTE DATA", followed by the found substitute item names placed within the symbols "##".
+The item names should be separated by symbol ",".
+Example:
+SUBSTITUTE DATA ## Medtronic 2098-3056 Defibrillator Pads, Bandage, 4" x 4, GE Healthcare '10062951' Patient Monitor ##
 
 ITEMS:
 When you return item information, make sure the item name is exactly the same as in the retrieved data. 
