@@ -675,7 +675,7 @@ For any user input that asks about substitutes, on top of your answer, append a 
 SUBSTITUTE DATA ## item name, item name, ##.
 Doing this is to make it easier for string formatting.
 Start with the keyword "SUBSTITUTE DATA", followed by the found substitute item names placed within the symbols "##".
-The item names should be separated by symbol ",".
+The item names should be separated by symbol ";".
 Example:
 SUBSTITUTE DATA ## Medtronic 2098-3056 Defibrillator Pads, Bandage, 4" x 4, GE Healthcare '10062951' Patient Monitor ##
 
