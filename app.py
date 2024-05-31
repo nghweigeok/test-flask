@@ -677,7 +677,7 @@ Doing this is to make it easier for string formatting.
 Start with the keyword "SUBSTITUTE DATA", followed by the found substitute item names placed within the symbols "##".
 The item names should be separated by symbol ";".
 Example:
-SUBSTITUTE DATA ## Medtronic 2098-3056 Defibrillator Pads, Bandage, 4" x 4, GE Healthcare '10062951' Patient Monitor ##
+SUBSTITUTE DATA ## Medtronic 2098-3056 Defibrillator Pads; Bandage, 4" x 4; GE Healthcare '10062951' Patient Monitor ##
 
 ITEMS:
 When you return item information, make sure the item name is exactly the same as in the retrieved data. 
